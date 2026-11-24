@@ -1,0 +1,27 @@
+<div class="toggle" role="radiogroup" [attr.aria-labelledby]="labelledBy()">
+  <button
+    type="button"
+    role="radio"
+    class="opt opt--yes"
+    [class.opt--active]="value() === true"
+    [attr.aria-checked]="value() === true"
+    [disabled]="disabled()"
+    (click)="set(true)"
+    (blur)="onTouched()"
+  >
+    Yes
+  </button>
+
+  <button
+    type="button"
+    role="radio"
+    class="opt opt--no"
+    [class.opt--active]="value() === false"
+    [attr.aria-checked]="value() === false"
+    [disabled]="disabled()"
+    (click)="set(false)"
+    (blur)="onTouched()"
+  >
+    No
+  </button>
+</div>

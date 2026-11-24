@@ -1,0 +1,34 @@
+<div
+  class="stars"
+  role="radiogroup"
+  [attr.aria-labelledby]="labelledBy()"
+  aria-required="true"
+  [attr.aria-describedby]="describedBy()"
+  (mouseleave)="hover.set(0)"
+  (keydown)="onKeydown($event)"
+>
+  @for (s of stars; track s) {
+    <button
+      #starBtn
+      type="button"
+      role="radio"
+      class="star"
+      [class.star-filled]="s <= display()"
+      [class.star-preview]="hover() > 0 && s <= hover()"
+      [attr.aria-checked]="s === value()"
+      [attr.aria-label]="s === 1 ? '1 star' : s + ' stars'"
+      [tabIndex]="s === (value() || 1) ? 0 : -1"
+      [disabled]="disabled()"
+      (mouseenter)="hover.set(s)"
+      (focus)="hover.set(s)"
+      (click)="select(s)"
+      (blur)="onTouched()"
+    >
+      ★
+    </button>
+  }
+
+  <span class="star-label" aria-hidden="true">
+    {{ value() ? value() + ' / 5' : 'Not rated' }}
+  </span>
+</div>

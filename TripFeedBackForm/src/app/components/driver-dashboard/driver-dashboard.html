@@ -1,0 +1,116 @@
+<section class="card" aria-labelledby="dash-title">
+  <h2 id="dash-title">Transport Manager - Driver Aggregates</h2>
+
+  <div class="filter" role="group" aria-label="Filter drivers">
+    <button
+      type="button"
+      [class.active]="filter() === 'all'"
+      [attr.aria-pressed]="filter() === 'all'"
+      (click)="filter.set('all')"
+    >
+      All drivers
+    </button>
+    <button
+      type="button"
+      [class.active]="filter() === 'low'"
+      [attr.aria-pressed]="filter() === 'low'"
+      (click)="filter.set('low')"
+    >
+      Below {{ threshold }} only
+    </button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th scope="col" class="col-toggle"><span class="sr-only">Details</span></th>
+        <th scope="col">Driver</th>
+        <th scope="col" class="num">Trips</th>
+        <th scope="col" class="num">Ratings</th>
+        <th scope="col" class="num">Avg</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (d of rows(); track d.driverId) {
+        <tr [class.row-low]="d.isLow">
+          <td class="col-toggle">
+            <button
+              type="button"
+              class="chevron"
+              [attr.aria-expanded]="expanded().has(d.driverId)"
+              [attr.aria-controls]="'detail-' + d.driverId"
+              [attr.aria-label]="'Show submissions for ' + d.driverName"
+              (click)="toggle(d.driverId)"
+            >
+              {{ expanded().has(d.driverId) ? '▼' : '▶' }}
+            </button>
+          </td>
+          <td>{{ d.driverName }} <span class="muted">({{ d.driverId }})</span></td>
+          <td class="num">{{ d.tripCount }}</td>
+          <td class="num">{{ d.ratingCount }}</td>
+          <td class="num">
+            {{ d.average | average }}
+            @if (d.isLow) { <app-low-rating-badge /> }
+          </td>
+        </tr>
+        @if (expanded().has(d.driverId)) {
+          <tr class="detail" [id]="'detail-' + d.driverId">
+            <td colspan="5">
+              @if (d.submissions.length) {
+                <ul>
+                  @for (s of d.submissions.slice().reverse(); track s.tripId) {
+                    <li>
+                      <strong>{{ s.tripId }}</strong>
+                      <span class="detail-stars" [attr.aria-label]="s.rating + ' out of 5 stars'">
+                        {{ '★'.repeat(s.rating) }}{{ '☆'.repeat(5 - s.rating) }}
+                      </span>
+                      <span>On time: {{ s.onTime ? 'Yes' : 'No' }}</span>
+                      <span class="muted">{{ s.submittedAt | date: 'shortTime' }}</span>
+                      <div class="detail-comment">
+                        @if (s.comment; as c) {
+                          @let full = expandedComments().has(s.tripId);
+                          @let long = c.length > COMMENT_PREVIEW;
+                          <span [id]="'comment-' + s.tripId">
+                            "{{ full || !long ? c : c.slice(0, COMMENT_PREVIEW) + '…' }}"
+                          </span>
+                          @if (long) {
+                            <button
+                              type="button"
+                              class="link-btn"
+                              [attr.aria-expanded]="full"
+                              [attr.aria-controls]="'comment-' + s.tripId"
+                              (click)="toggleComment(s.tripId)"
+                            >
+                              {{ full ? 'Show less' : 'Show more' }}
+                            </button>
+                          }
+                        } @else {
+                          <span class="muted">No comment</span>
+                        }
+                      </div>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="muted">No submissions yet.</p>
+              }
+            </td>
+          </tr>
+        }
+      } @empty {
+        <tr>
+          <td colspan="5" class="muted empty">No drivers below {{ threshold }}.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <p class="summary">
+    @if (store.submissions().length) {
+      All trips aggregate: <strong>{{ store.overallAverage() | average }}</strong>
+      ({{ store.submissions().length }} {{ store.submissions().length === 1 ? 'response' : 'responses' }})
+    } @else {
+      <span class="muted">No feedback yet - submit the form to see aggregates.</span>
+    }
+  </p>
+</section>

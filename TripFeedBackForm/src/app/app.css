@@ -1,0 +1,26 @@
+.app-header{
+    background: #1f2a44;
+    color: #fff;
+    padding: 14px 24px;
+}
+
+.app-header h1{
+    margin : 0;
+    font-size: 1.15rem;
+}
+
+.app-grid{
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) minmax(360px, 1.2fr);
+    gap: 20px;
+    padding: 20px 24px;
+    max-width: 1200px;
+    margin: o auto;
+    align-items: start;
+}
+
+.app-grid > * {min-width: 0;}
+
+@media (max-width: 800px){
+    .app-grid {grid-template-columns: 1fr;}
+}

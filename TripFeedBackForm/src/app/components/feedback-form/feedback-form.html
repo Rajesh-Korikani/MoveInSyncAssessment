@@ -1,0 +1,130 @@
+<section class="card" aria-labelledby="form-title">
+  <h2 id="form-title">
+    Submit Feedback@if (vm().selectedTrip; as t) { - Trip {{ t.tripId }} }
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Trip -->
+    <div class="field">
+      <label for="trip" class="label">
+        Trip <span aria-hidden="true">*</span>
+      </label>
+
+      <select
+        id="trip"
+        formControlName="tripId"
+        [attr.aria-invalid]="!!vm().tripError"
+        [attr.aria-describedby]="vm().tripError ? 'trip-err' : null"
+      >
+        <option value="" disabled>Select a trip...</option>
+
+        @for (t of store.trips; track t.tripId) {
+          <option
+            [value]="t.tripId"
+            [disabled]="store.ratedTripIds().has(t.tripId)"
+          >
+            {{ t.tripId }} - {{ t.driverName }}
+            {{ store.ratedTripIds().has(t.tripId) ? ' (already rated)' : '' }}
+          </option>
+        }
+      </select>
+
+      @if (vm().selectedTrip; as t) {
+        <p class="muted">Driver: {{ t.driverName }} ({{ t.driverId }})</p>
+      }
+
+      @if (vm().tripError) {
+        <p id="trip-err" class="error">{{ vm().tripError }}</p>
+      }
+    </div>
+
+    <!-- Rating -->
+    <div class="field">
+      <span id="rating-label" class="label">
+        Overall rating <span aria-hidden="true">*</span>
+      </span>
+
+      <app-star-rating
+        formControlName="rating"
+        labelledBy="rating-label"
+        [describedBy]="vm().ratingError ? 'rating-err' : null"
+      />
+
+      @if (vm().ratingError) {
+        <p id="rating-err" class="error">{{ vm().ratingError }}</p>
+      }
+    </div>
+
+    <!-- On time -->
+    <div class="field">
+      <span id="ontime-label" class="label">
+        Was the driver on time?
+      </span>
+
+      <app-yes-no-toggle
+        formControlName="onTime"
+        labelledBy="ontime-label"
+      />
+    </div>
+
+    <!-- Comment -->
+    <div class="field">
+      <label for="comment" class="label">Comments (optional)</label>
+
+      <textarea
+        id="comment"
+        formControlName="comment"
+        rows="3"
+        placeholder="Smooth ride, AC could be better"
+        [attr.aria-invalid]="vm().commentOver"
+        aria-describedby="comment-count comment-err"
+      ></textarea>
+
+      <div class="comment-meta">
+        <span id="comment-err" class="error" aria-live="polite">
+          @if (vm().commentOver) {
+            Comment must be {{ COMMENT_MAX }} characters or fewer.
+          }
+        </span>
+
+        <span
+          id="comment-count"
+          class="counter"
+          [class.counter--over]="vm().commentOver"
+        >
+          {{ vm().commentLength }} / {{ COMMENT_MAX }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="actions">
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="!vm().valid || submitting()"
+        [attr.aria-describedby]="vm().missingHint ? 'submit-hint' : null"
+      >
+        {{ submitting() ? 'Submitting...' : 'Submit Feedback' }}
+      </button>
+
+      @if (vm().missingHint) {
+        <span id="submit-hint" class="muted">
+          {{ vm().missingHint }}
+        </span>
+      }
+    </div>
+
+    <div aria-live="polite" class="status">
+      @if (submitError()) {
+        <p class="error">{{ submitError() }}</p>
+      }
+
+      @if (lastSubmitted()) {
+        <p class="success">
+          Feedback for {{ lastSubmitted() }} submitted.
+        </p>
+      }
+    </div>
+  </form>
+</section>

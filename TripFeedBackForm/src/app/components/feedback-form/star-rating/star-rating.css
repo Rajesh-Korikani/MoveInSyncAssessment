@@ -1,0 +1,41 @@
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.star {
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0 2px;
+  border: none;
+  background: none;
+  color: #d7dce4;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.1s, transform 0.1s;
+}
+
+.star-filled {
+  color: #f5a623;
+}
+
+.star-preview {
+  transform: scale(1.12);
+}
+
+.star:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.star:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.star-label {
+  margin-left: 8px;
+  font-size: 0.85rem;
+  color: #555;
+}
