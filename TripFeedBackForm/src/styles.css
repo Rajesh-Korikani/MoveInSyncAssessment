@@ -20,3 +20,21 @@ body{
     font-size: 1.05rem;
 }
 
+.muted {
+    color: #6b7280;
+    font-size: .85rem;
+    margin: 4px 0 0;
+}
+
+.error{
+    color: #d32f2f;
+    font-size: .85rem;
+    margin: 4px 0 0;
+}
+
+.success{
+    color: #2e7d32;
+    font-size: .9rem;
+    margin: 4px 0 0;
+    font-weight: 600;
+}
